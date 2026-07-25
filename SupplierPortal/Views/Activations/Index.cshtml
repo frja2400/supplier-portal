@@ -1,0 +1,49 @@
+@model IEnumerable<SupplierPortal.Models.Activation>
+
+@{
+    ViewData["Title"] = "Activations";
+}
+
+<h1>Activations</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">+ Add manually</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Supplier</th>
+            <th>Product</th>
+            <th>Impressions</th>
+            <th>Clicks</th>
+            <th>Revenue</th>
+            <th>Period</th>
+            <th>Year</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Supplier.Name</td>
+                <td>@item.Product</td>
+                <td>@item.Impressions</td>
+                <td>@item.Clicks</td>
+                <td>@item.Revenue.ToString("N0") SEK</td>
+                <td>@item.Period</td>
+                <td>@item.Year</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (!Model.Any())
+{
+    <p><em>No activations registered yet.</em></p>
+}

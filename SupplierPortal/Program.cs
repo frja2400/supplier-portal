@@ -44,6 +44,9 @@ if (!app.Environment.IsDevelopment())
 using (var scope = app.Services.CreateScope())
 {
     await SeedData.EnsureRolesCreatedAsync(scope.ServiceProvider);
+
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    await SeedData.EnsureTestSuppliersCreatedAsync(context);
 }
 
 app.UseHttpsRedirection();

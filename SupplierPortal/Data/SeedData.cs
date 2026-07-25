@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using SupplierPortal.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace SupplierPortal.Data
 {
@@ -20,6 +21,19 @@ namespace SupplierPortal.Data
                 {
                     await roleManager.CreateAsync(new IdentityRole(role));
                 }
+            }
+        }
+
+        // Tillfällig
+        public static async Task EnsureTestSuppliersCreatedAsync(ApplicationDbContext context)
+        {
+            if (!context.Suppliers.Any())
+            {
+                context.Suppliers.AddRange(
+                    new Supplier { Name = "Eucerin AB" },
+                    new Supplier { Name = "Vichy Nordic" }
+                );
+                await context.SaveChangesAsync();
             }
         }
     }

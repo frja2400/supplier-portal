@@ -1,0 +1,62 @@
+@model SupplierPortal.Models.Activation
+
+@{
+    ViewData["Title"] = "Add activation";
+}
+
+<h1>Add activation</h1>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="mb-3">
+                <label asp-for="SupplierId" class="form-label">Supplier</label>
+                <select asp-for="SupplierId" class="form-select" asp-items="ViewBag.SupplierId">
+                    <option value="">-- Select supplier --</option>
+                </select>
+                <span asp-validation-for="SupplierId" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Product" class="form-label"></label>
+                <input asp-for="Product" class="form-control" />
+                <span asp-validation-for="Product" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Impressions" class="form-label"></label>
+                <input asp-for="Impressions" class="form-control" />
+                <span asp-validation-for="Impressions" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Clicks" class="form-label"></label>
+                <input asp-for="Clicks" class="form-control" />
+                <span asp-validation-for="Clicks" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Revenue" class="form-label">Revenue (SEK)</label>
+                <input asp-for="Revenue" class="form-control" />
+                <span asp-validation-for="Revenue" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Period" class="form-label"></label>
+                <input asp-for="Period" class="form-control" placeholder="e.g. June" />
+                <span asp-validation-for="Period" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Year" class="form-label"></label>
+                <input asp-for="Year" class="form-control" />
+                <span asp-validation-for="Year" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save activation</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>

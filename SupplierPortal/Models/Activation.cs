@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace SupplierPortal.Models
 {
@@ -11,7 +12,6 @@ namespace SupplierPortal.Models
         public string Product { get; set; } = string.Empty;
 
         public int Impressions { get; set; }
-
         public int Clicks { get; set; }
 
         [Range(0, double.MaxValue)]
@@ -23,10 +23,9 @@ namespace SupplierPortal.Models
 
         public int Year { get; set; }
 
-        // Foreign key
         public int SupplierId { get; set; }
 
-        // Navigationsegenskap tillbaka till Supplier
+        [ValidateNever]
         public Supplier Supplier { get; set; } = null!;
     }
 }

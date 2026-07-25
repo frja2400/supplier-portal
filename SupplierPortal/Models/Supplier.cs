@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace SupplierPortal.Models
 {
@@ -17,6 +18,8 @@ namespace SupplierPortal.Models
 
         // Ansvarig MEDS-admin för denna leverantör (kan vara ospecificerad)
         public string? AccountManagerId { get; set; }
+        
+        [ValidateNever]
         public ApplicationUser? AccountManager { get; set; }
     }
 }
