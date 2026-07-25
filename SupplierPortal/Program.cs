@@ -13,7 +13,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     {
+        // Lösenordsregler: Identity-standard, förutom längden
         options.Password.RequiredLength = 8;
+        // RequireNonAlphanumeric, RequireUppercase, RequireLowercase, RequireDigit
+        // lämnas som Identity-standard (alla true)
+
+        // Kontolåsning vid för många felförsök
+        options.Lockout.MaxFailedAccessAttempts = 5;
+        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
     })
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
