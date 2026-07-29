@@ -1,4 +1,4 @@
-@model IEnumerable<SupplierPortal.Models.Supplier>
+@model SupplierPortal.Models.ViewModels.SuppliersIndexViewModel
 
 @{
     ViewData["Title"] = "Suppliers";
@@ -7,23 +7,27 @@
 <h1>Suppliers</h1>
 
 <p>
-    <a asp-action="Create" class="btn btn-primary">+ Add supplier</a>
+    <a asp-controller="Suppliers" asp-action="Create" class="btn btn-primary">+ Add supplier</a>
 </p>
 
 <table class="table">
     <thead>
         <tr>
             <th>Name</th>
+            <th>Account email</th>
             <th>Account manager</th>
             <th>Looker Studio</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in Model.Suppliers)
         {
             <tr>
                 <td>@item.Name</td>
+                <td>
+                    @(Model.AccountEmailBySupplierId.TryGetValue(item.Id, out var email) ? email : "—")
+                </td>
                 <td>@(item.AccountManager?.Email ?? "—")</td>
                 <td>
                     @if (!string.IsNullOrEmpty(item.LookerStudioUrl))
@@ -44,7 +48,79 @@
     </tbody>
 </table>
 
-@if (!Model.Any())
+@if (!Model.Suppliers.Any())
 {
     <p><em>No suppliers registered yet.</em></p>
 }
+
+<hr class="my-4" />
+
+<h2>Create supplier account</h2>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="CreateAccount" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="mb-3">
+                <label asp-for="NewAccount.SupplierId" class="form-label">Supplier</label>
+                <select asp-for="NewAccount.SupplierId" class="form-select"
+                        asp-items="ViewBag.AvailableSuppliersForAccount">
+                    <option value="">-- Select supplier --</option>
+                </select>
+                <span asp-validation-for="NewAccount.SupplierId" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="NewAccount.Email" class="form-label">Account email</label>
+                <input asp-for="NewAccount.Email" class="form-control" />
+                <span asp-validation-for="NewAccount.Email" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="NewAccount.Password" class="form-label">Temporary password</label>
+                <div class="input-group">
+                    <input asp-for="NewAccount.Password" class="form-control" id="passwordField" type="text" />
+                    <button type="button" class="btn btn-outline-secondary"
+                            onclick="generatePassword()">Generate</button>
+                </div>
+                <div class="form-text">
+                    At least 8 characters, including one uppercase letter, one lowercase letter, one digit, and one
+                    special character.
+                </div>
+                <span asp-validation-for="NewAccount.Password" class="text-danger"></span>
+            </div>
+
+            <div class="alert alert-info">
+                Copy the generated password before submitting, it cannot be retrieved afterwards.
+            </div>
+
+            <button type="submit" class="btn btn-primary">Create account</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function generatePassword() {
+        const upper = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+        const lower = "abcdefghijkmnopqrstuvwxyz";
+        const digits = "23456789";
+        const special = "!?#%&*";
+        const all = upper + lower + digits + special;
+
+        let password = [
+            upper[Math.floor(Math.random() * upper.length)],
+            lower[Math.floor(Math.random() * lower.length)],
+            digits[Math.floor(Math.random() * digits.length)],
+            special[Math.floor(Math.random() * special.length)]
+        ];
+
+        for (let i = password.length; i < 12; i++) {
+            password.push(all[Math.floor(Math.random() * all.length)]);
+        }
+
+        password = password.sort(() => Math.random() - 0.5).join("");
+
+        document.getElementById("passwordField").value = password;
+    }
+</script>

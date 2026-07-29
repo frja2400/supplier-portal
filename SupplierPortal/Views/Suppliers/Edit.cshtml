@@ -32,8 +32,33 @@
                 <span asp-validation-for="AccountManagerId" class="text-danger"></span>
             </div>
 
-            <button type="submit" class="btn btn-primary">Save changes</button>
-            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-        </form>
+            @if (ViewBag.AccountEmail != null)
+            {
+                <div class="mb-3">
+                    <label class="form-label">Account email</label>
+                    <input type="email" name="accountEmail" class="form-control" value="@ViewBag.AccountEmail" />
+                    <span class="text-danger">
+                        @Html.ValidationMessage("accountEmail")
+                    </span>
+                </div>
+            }
+            else
+            {
+                <p class="text-muted"><em>This supplier does not have an account yet. Create one from the Suppliers
+                    list.</em></p>
+                }
+
+                <button type="submit" class="btn btn-primary">Save changes</button>
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </form>
+
+            @if (ViewBag.AccountEmail != null)
+            {
+                <form asp-action="RemoveAccount" method="post" class="mt-2"
+                      onsubmit="return confirm('Remove this supplier\'s account? They will no longer be able to log in.');">
+                    <input type="hidden" name="supplierId" value="@Model.Id" />
+                    <button type="submit" class="btn btn-outline-danger btn-sm">Remove account</button>
+                </form>
+            }
+        </div>
     </div>
-</div>
