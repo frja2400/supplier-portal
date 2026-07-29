@@ -4,29 +4,118 @@
     ViewData["Title"] = "Activations";
 }
 
+@functions {
+    string NextSort(string column, string currentSort)
+    {
+        return currentSort == $"{column}_asc" ? $"{column}_desc" : $"{column}_asc";
+    }
+}
+
 <h1>Activations</h1>
 
 <p>
     <a asp-action="Create" class="btn btn-primary">+ Add manually</a>
 </p>
 
+<form asp-action="Index" method="get" id="filterForm" class="row g-2 mb-2">
+    <div class="col-auto">
+        <input type="text" id="searchInput" class="form-control" placeholder="Search product or supplier..."
+               autocomplete="off" />
+    </div>
+    <div class="col-auto">
+        <select id="supplierSelect" class="form-select" asp-items="ViewBag.SupplierFilter">
+            <option value="">-- All suppliers --</option>
+        </select>
+    </div>
+    <div class="col-auto">
+        <select id="periodSelect" class="form-select" asp-items="ViewBag.PeriodFilter">
+            <option value="">-- All periods --</option>
+        </select>
+    </div>
+
+    @foreach (var s in (List<SupplierPortal.Models.Supplier>)ViewBag.SelectedSuppliers)
+    {
+        <input type="hidden" name="supplierId" value="@s.Id" />
+    }
+    @foreach (var p in (List<string>)ViewBag.SelectedPeriods)
+    {
+        <input type="hidden" name="period" value="@p" />
+    }
+    <input type="hidden" name="sortOrder" value="@ViewBag.CurrentSort" />
+</form>
+
+@{
+    var selectedSuppliers = (List<SupplierPortal.Models.Supplier>)ViewBag.SelectedSuppliers;
+    var selectedPeriods = (List<string>)ViewBag.SelectedPeriods;
+}
+
+@if (selectedSuppliers.Any() || selectedPeriods.Any())
+{
+    <div class="mb-3">
+        @foreach (var s in selectedSuppliers)
+        {
+            <a class="btn btn-sm btn-outline-secondary me-1" href="@Url.Action("Index", new
+               {
+                   supplierId = selectedSuppliers.Where(x => x.Id != s.Id).Select(x => x.Id).ToArray(),
+                   period = selectedPeriods.ToArray(),
+                   sortOrder = ViewBag.CurrentSort
+               })">
+                Supplier: @s.Name &times;
+            </a>
+        }
+        @foreach (var p in selectedPeriods)
+        {
+            <a class="btn btn-sm btn-outline-secondary me-1" href="@Url.Action("Index", new
+               {
+                   supplierId = selectedSuppliers.Select(x => x.Id).ToArray(),
+                   period = selectedPeriods.Where(x => x != p).ToArray(),
+                   sortOrder = ViewBag.CurrentSort
+               })">
+                Period: @p &times;
+            </a>
+        }
+        <a class="btn btn-sm btn-link" asp-action="Index">Clear all</a>
+    </div>
+}
+
 <table class="table">
     <thead>
         <tr>
-            <th>Supplier</th>
-            <th>Product</th>
-            <th>Impressions</th>
-            <th>Clicks</th>
-            <th>Revenue</th>
-            <th>Period</th>
-            <th>Year</th>
+            <th>
+                <a
+                href="@Url.Action("Index", new { sortOrder = NextSort("supplier", ViewBag.CurrentSort), supplierId = selectedSuppliers.Select(x => x.Id).ToArray(), period = selectedPeriods.ToArray() })">Supplier</a>
+            </th>
+            <th>
+                <a
+                href="@Url.Action("Index", new { sortOrder = NextSort("product", ViewBag.CurrentSort), supplierId = selectedSuppliers.Select(x => x.Id).ToArray(), period = selectedPeriods.ToArray() })">Product</a>
+            </th>
+            <th>
+                <a
+                href="@Url.Action("Index", new { sortOrder = NextSort("impressions", ViewBag.CurrentSort), supplierId = selectedSuppliers.Select(x => x.Id).ToArray(), period = selectedPeriods.ToArray() })">Impressions</a>
+            </th>
+            <th>
+                <a
+                href="@Url.Action("Index", new { sortOrder = NextSort("clicks", ViewBag.CurrentSort), supplierId = selectedSuppliers.Select(x => x.Id).ToArray(), period = selectedPeriods.ToArray() })">Clicks</a>
+            </th>
+            <th>
+                <a
+                href="@Url.Action("Index", new { sortOrder = NextSort("revenue", ViewBag.CurrentSort), supplierId = selectedSuppliers.Select(x => x.Id).ToArray(), period = selectedPeriods.ToArray() })">Revenue</a>
+            </th>
+            <th>
+                <a
+                href="@Url.Action("Index", new { sortOrder = NextSort("period", ViewBag.CurrentSort), supplierId = selectedSuppliers.Select(x => x.Id).ToArray(), period = selectedPeriods.ToArray() })">Period</a>
+            </th>
+            <th>
+                <a
+                href="@Url.Action("Index", new { sortOrder = NextSort("year", ViewBag.CurrentSort), supplierId = selectedSuppliers.Select(x => x.Id).ToArray(), period = selectedPeriods.ToArray() })">Year</a>
+            </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
+            <tr data-search="@($"{item.Product} {item.Supplier.Name}".ToLower())">
                 <td>@item.Supplier.Name</td>
                 <td>@item.Product</td>
                 <td>@item.Impressions</td>
@@ -45,5 +134,30 @@
 
 @if (!Model.Any())
 {
-    <p><em>No activations registered yet.</em></p>
+    <p><em>No activations match your search/filters.</em></p>
 }
+
+<script>
+    document.getElementById('searchInput').addEventListener('input', function () {
+        const term = this.value.trim().toLowerCase();
+        const rows = document.querySelectorAll('tbody tr[data-search]');
+
+        rows.forEach(function (row) {
+            const matches = row.dataset.search.includes(term);
+            row.style.display = matches ? '' : 'none';
+        });
+    });
+
+    function addFilter(selectId, paramName) {
+        document.getElementById(selectId).addEventListener('change', function () {
+            if (!this.value) return;
+
+            const url = new URL(window.location);
+            url.searchParams.append(paramName, this.value);
+            window.location = url;
+        });
+    }
+
+    addFilter('supplierSelect', 'supplierId');
+    addFilter('periodSelect', 'period');
+</script>
