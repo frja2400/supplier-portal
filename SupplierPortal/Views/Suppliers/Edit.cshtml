@@ -20,7 +20,8 @@
 
             <div class="mb-3">
                 <label asp-for="LookerStudioUrl" class="form-label">Looker Studio URL (optional)</label>
-                <input asp-for="LookerStudioUrl" class="form-control" />
+                <input asp-for="LookerStudioUrl" class="form-control" type="text"
+                       placeholder="https://lookerstudio.google.com/..." />
                 <span asp-validation-for="LookerStudioUrl" class="text-danger"></span>
             </div>
 

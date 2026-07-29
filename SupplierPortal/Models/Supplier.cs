@@ -12,13 +12,14 @@ namespace SupplierPortal.Models
         public string Name { get; set; } = string.Empty;
 
         [MaxLength(500)]
+        [Url(ErrorMessage = "Please enter a valid URL, starting with https://")]
         public string? LookerStudioUrl { get; set; }
 
         public ICollection<Activation> Activations { get; set; } = new List<Activation>();
 
         // Ansvarig MEDS-admin för denna leverantör (kan vara ospecificerad)
         public string? AccountManagerId { get; set; }
-        
+
         [ValidateNever]
         public ApplicationUser? AccountManager { get; set; }
     }
