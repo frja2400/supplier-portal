@@ -12,7 +12,7 @@
     }
 }
 
-<h1>@supplier.Name</h1>
+<h1 class="mb-3">@supplier.Name</h1>
 
 <div class="mb-4">
     @if (supplier.AccountManager != null)
@@ -35,9 +35,9 @@
     }
 </div>
 
-<h2>Your activations</h2>
+<h2 class="mb-3">Your activations</h2>
 
-<form asp-action="Index" method="get" id="filterForm" class="row g-2 mb-2">
+<form asp-action="Index" method="get" id="filterForm" class="row g-2 mb-3">
     <div class="col-auto">
         <select id="periodSelect" class="form-select" asp-items="ViewBag.PeriodFilter">
             <option value="">-- All periods --</option>

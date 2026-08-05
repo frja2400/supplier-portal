@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - SupplierPortal</title>
+    <title>@ViewData["Title"] - Supplier Portal</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -12,73 +12,81 @@
 </head>
 
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">SupplierPortal</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
-                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home"
-                               asp-action="Privacy">Privacy</a>
-                        </li>
-                        @if (User.IsInRole(SupplierPortal.Data.SeedData.MedsEmployeeRole))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Activations"
-                                   asp-action="Index">Activations</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Suppliers" asp-action="Index">Suppliers</a>
-                            </li>
-                        }
-                        @if (User.IsInRole(SupplierPortal.Data.SeedData.SupplierRole))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="MyPortal" asp-action="Index">My
-                                    Activations</a>
-                                </li>
-                            }
-                            <li class="nav-item">
-                                @if (User.Identity != null && User.Identity.IsAuthenticated)
-                                {
-                                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
-                                        <button type="submit" class="nav-link btn btn-link">Logga ut
-                                            (@User.Identity.Name)</button>
-                                        </form>
-                                    }
-                                    else
-                                    {
-                                        <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Logga in</a>
-                                    }
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </nav>
-            </header>
-            <div class="container">
-                <main role="main" class="pb-3">
-                    @RenderBody()
-                </main>
-            </div>
+    <div class="d-flex" style="min-height: 100vh;">
+        <nav class="d-flex flex-column flex-shrink-0 p-3"
+             style="width: 240px; background-color: var(--sidebar-bg); border-right: 1px solid var(--sidebar-border);">
+            <a asp-controller="Home" asp-action="Index" class="d-flex align-items-center mb-3 text-decoration-none">
+                <span class="fs-5 fw-bold" style="color: var(--bs-primary);">Supplier Portal</span>
+            </a>
+            <hr />
 
-            <footer class="border-top footer text-muted">
-                <div class="container">
-                    &copy; 2026 - SupplierPortal - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            @if (User.IsInRole(SupplierPortal.Data.SeedData.MedsEmployeeRole))
+            {
+                <ul class="nav nav-pills flex-column mb-auto">
+                    <li class="nav-item">
+                        <a asp-controller="Activations" asp-action="Index"
+                           class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Activations" ? "active" : "text-dark")"
+                           style="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Activations" ? $"background-color: var(--sidebar-active-bg); color: var(--bs-primary);" : "")">
+                            Activations
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-controller="Suppliers" asp-action="Index"
+                           class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Suppliers" ? "active" : "text-dark")"
+                           style="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Suppliers" ? $"background-color: var(--sidebar-active-bg); color: var(--bs-primary);" : "")">
+                            Suppliers
+                        </a>
+                    </li>
+                </ul>
+            }
+            else if (User.IsInRole(SupplierPortal.Data.SeedData.SupplierRole))
+            {
+                <ul class="nav nav-pills flex-column mb-auto">
+                    <li class="nav-item">
+                        <a asp-controller="MyPortal" asp-action="Index"
+                           class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "MyPortal" ? "active" : "text-dark")"
+                           style="@(ViewContext.RouteData.Values["controller"]?.ToString() == "MyPortal" ? $"background-color: var(--sidebar-active-bg); color: var(--bs-primary);" : "")">
+                            My Activations
+                        </a>
+                    </li>
+                </ul>
+            }
+            else
+            {
+                <div class="mb-auto"></div>
+            }
+
+            <hr />
+
+            @if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                <div class="mb-2">
+                    <small class="text-muted d-block">Logged in as</small>
+                    <small class="fw-semibold" style="word-break: break-all;">@User.Identity.Name</small>
                 </div>
-            </footer>
-            <script src="~/lib/jquery/dist/jquery.min.js"></script>
-            <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-            <script src="~/js/site.js" asp-append-version="true"></script>
-            @await RenderSectionAsync("Scripts", required: false)
-        </body>
+                <form asp-controller="Account" asp-action="Logout" method="post">
+                    <button type="submit" class="btn btn-outline-secondary btn-sm w-100">
+                        Log out
+                    </button>
+                </form>
+            }
+            else
+            {
+                <a asp-controller="Account" asp-action="Login" class="btn btn-primary btn-sm w-100">
+                    Log in
+                </a>
+            }
+        </nav>
 
-    </html>
+        <main class="flex-grow-1 p-4">
+            @RenderBody()
+        </main>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

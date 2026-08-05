@@ -11,13 +11,13 @@
     }
 }
 
-<h1>Activations</h1>
+<h1 class="mb-3">Activations</h1>
 
-<p>
+<p class="mb-4">
     <a asp-action="Create" class="btn btn-primary">+ Add manually</a>
 </p>
 
-<form asp-action="Index" method="get" id="filterForm" class="row g-2 mb-2">
+<form asp-action="Index" method="get" id="filterForm" class="row g-2 mb-4">
     <div class="col-auto">
         <input type="text" id="searchInput" class="form-control" placeholder="Search product or supplier..."
                autocomplete="off" />
@@ -51,7 +51,7 @@
 
 @if (selectedSuppliers.Any() || selectedPeriods.Any())
 {
-    <div class="mb-3">
+    <div class="mb-4">
         @foreach (var s in selectedSuppliers)
         {
             <a class="btn btn-sm btn-outline-secondary me-1" href="@Url.Action("Index", new
