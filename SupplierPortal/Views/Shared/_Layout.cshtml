@@ -7,6 +7,7 @@
     <title>@ViewData["Title"] - Supplier Portal</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/SupplierPortal.styles.css" asp-append-version="true" />
 </head>
@@ -27,14 +28,21 @@
                         <a asp-controller="Activations" asp-action="Index"
                            class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Activations" ? "active" : "text-dark")"
                            style="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Activations" ? $"background-color: var(--sidebar-active-bg); color: var(--bs-primary);" : "")">
-                            Activations
+                            <i class="bi bi-megaphone me-2"></i>Activations
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-controller="Import" asp-action="Index"
+                           class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Import" ? "active" : "text-dark")"
+                           style="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Import" ? $"background-color: var(--sidebar-active-bg); color: var(--bs-primary);" : "")">
+                            <i class="bi bi-upload me-2"></i>Import data
                         </a>
                     </li>
                     <li>
                         <a asp-controller="Suppliers" asp-action="Index"
                            class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Suppliers" ? "active" : "text-dark")"
                            style="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Suppliers" ? $"background-color: var(--sidebar-active-bg); color: var(--bs-primary);" : "")">
-                            Suppliers
+                            <i class="bi bi-people me-2"></i>Suppliers
                         </a>
                     </li>
                 </ul>
@@ -46,7 +54,7 @@
                         <a asp-controller="MyPortal" asp-action="Index"
                            class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "MyPortal" ? "active" : "text-dark")"
                            style="@(ViewContext.RouteData.Values["controller"]?.ToString() == "MyPortal" ? $"background-color: var(--sidebar-active-bg); color: var(--bs-primary);" : "")">
-                            My Activations
+                            <i class="bi bi-megaphone me-2"></i>My Activations
                         </a>
                     </li>
                 </ul>

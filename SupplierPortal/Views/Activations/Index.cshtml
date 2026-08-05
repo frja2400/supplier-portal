@@ -13,6 +13,11 @@
 
 <h1 class="mb-3">Activations</h1>
 
+@if (TempData["ImportSuccess"] != null)
+{
+    <div class="alert alert-success">@TempData["ImportSuccess"]</div>
+}
+
 <p class="mb-4">
     <a asp-action="Create" class="btn btn-primary">+ Add manually</a>
 </p>
@@ -81,32 +86,25 @@
 <table class="table">
     <thead>
         <tr>
-            <th>
-                <a
+            <th><a
                 href="@Url.Action("Index", new { sortOrder = NextSort("supplier", ViewBag.CurrentSort), supplierId = selectedSuppliers.Select(x => x.Id).ToArray(), period = selectedPeriods.ToArray() })">Supplier</a>
             </th>
-            <th>
-                <a
+            <th><a
                 href="@Url.Action("Index", new { sortOrder = NextSort("product", ViewBag.CurrentSort), supplierId = selectedSuppliers.Select(x => x.Id).ToArray(), period = selectedPeriods.ToArray() })">Product</a>
             </th>
-            <th>
-                <a
+            <th><a
                 href="@Url.Action("Index", new { sortOrder = NextSort("impressions", ViewBag.CurrentSort), supplierId = selectedSuppliers.Select(x => x.Id).ToArray(), period = selectedPeriods.ToArray() })">Impressions</a>
             </th>
-            <th>
-                <a
+            <th><a
                 href="@Url.Action("Index", new { sortOrder = NextSort("clicks", ViewBag.CurrentSort), supplierId = selectedSuppliers.Select(x => x.Id).ToArray(), period = selectedPeriods.ToArray() })">Clicks</a>
             </th>
-            <th>
-                <a
+            <th><a
                 href="@Url.Action("Index", new { sortOrder = NextSort("revenue", ViewBag.CurrentSort), supplierId = selectedSuppliers.Select(x => x.Id).ToArray(), period = selectedPeriods.ToArray() })">Revenue</a>
             </th>
-            <th>
-                <a
+            <th><a
                 href="@Url.Action("Index", new { sortOrder = NextSort("period", ViewBag.CurrentSort), supplierId = selectedSuppliers.Select(x => x.Id).ToArray(), period = selectedPeriods.ToArray() })">Period</a>
             </th>
-            <th>
-                <a
+            <th><a
                 href="@Url.Action("Index", new { sortOrder = NextSort("year", ViewBag.CurrentSort), supplierId = selectedSuppliers.Select(x => x.Id).ToArray(), period = selectedPeriods.ToArray() })">Year</a>
             </th>
             <th></th>

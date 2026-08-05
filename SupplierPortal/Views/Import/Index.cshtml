@@ -1,0 +1,92 @@
+@{
+    ViewData["Title"] = "Import data";
+}
+
+<h1 class="mb-3">Import data</h1>
+
+@if (TempData["ImportSuccess"] != null)
+{
+    <div class="alert alert-success">@TempData["ImportSuccess"]</div>
+}
+@if (TempData["ImportError"] != null)
+{
+    <div class="alert alert-danger">@TempData["ImportError"]</div>
+}
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <form asp-controller="Import" asp-action="Upload" method="post" enctype="multipart/form-data" id="uploadForm">
+
+            <div id="dropZone" class="border rounded p-5 text-center mb-3"
+                 style="border-style: dashed !important; cursor: pointer; background-color: #fafafa;">
+                <i class="bi bi-cloud-arrow-up" style="font-size: 2.5rem; color: var(--bs-primary);"></i>
+                <p class="mb-2 mt-2">Drag and drop .xlsx or .csv</p>
+                <button type="button" class="btn btn-outline-primary btn-sm"
+                        onclick="document.getElementById('fileInput').click()">
+                    Choose file
+                </button>
+                <input type="file" id="fileInput" name="file" accept=".xlsx,.csv" required hidden />
+            </div>
+
+            <p id="fileName" class="text-muted mb-3"></p>
+
+            <button type="submit" class="btn btn-primary">Upload and preview</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const fileNameDisplay = document.getElementById('fileName');
+
+    function clearErrors() {
+        document.querySelectorAll('.alert-danger, .validation-summary-errors').forEach(function (el) {
+            el.style.display = 'none';
+        });
+    }
+
+    function showFileName() {
+        if (fileInput.files.length > 0) {
+            fileNameDisplay.innerHTML = `<i class="bi bi-file-earmark-spreadsheet"></i> ${fileInput.files[0].name}`;
+            clearErrors();
+        }
+    }
+
+    fileInput.addEventListener('change', showFileName);
+
+    dropZone.addEventListener('click', function (e) {
+        if (e.target.tagName !== 'BUTTON') {
+            fileInput.click();
+        }
+    });
+
+    dropZone.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        dropZone.style.backgroundColor = 'var(--sidebar-active-bg)';
+    });
+
+    dropZone.addEventListener('dragleave', function () {
+        dropZone.style.backgroundColor = '#fafafa';
+    });
+
+    dropZone.addEventListener('drop', function (e) {
+        e.preventDefault();
+        dropZone.style.backgroundColor = '#fafafa';
+
+        if (e.dataTransfer.files.length > 0) {
+            const droppedFile = e.dataTransfer.files[0];
+            const validExtensions = ['.xlsx', '.csv'];
+            const fileExtension = '.' + droppedFile.name.split('.').pop().toLowerCase();
+
+            if (!validExtensions.includes(fileExtension)) {
+                fileNameDisplay.innerHTML = `<span class="text-danger"><i class="bi bi-exclamation-triangle"></i> Please upload a .xlsx or .csv file.</span>`;
+                return;
+            }
+
+            fileInput.files = e.dataTransfer.files;
+            showFileName();
+        }
+    });
+</script>
