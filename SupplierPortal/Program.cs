@@ -46,9 +46,10 @@ if (!app.Environment.IsDevelopment())
 
 using (var scope = app.Services.CreateScope())
 {
-    await SeedData.EnsureRolesCreatedAsync(scope.ServiceProvider);
-
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    await context.Database.MigrateAsync();
+
+    await SeedData.EnsureRolesCreatedAsync(scope.ServiceProvider);
     await SeedData.EnsureTestSuppliersCreatedAsync(context);
 }
 
