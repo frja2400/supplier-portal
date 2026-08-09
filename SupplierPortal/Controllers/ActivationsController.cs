@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SupplierPortal.Data;
 using SupplierPortal.Models;
+using ClosedXML.Excel;
 
 namespace SupplierPortal.Controllers
 {
@@ -23,19 +24,7 @@ namespace SupplierPortal.Controllers
             var selectedSupplierIds = supplierId ?? new List<int>();
             var selectedPeriods = period ?? new List<string>();
 
-            var query = _context.Activations
-                .Include(a => a.Supplier)
-                .AsQueryable();
-
-            if (selectedSupplierIds.Any())
-            {
-                query = query.Where(a => selectedSupplierIds.Contains(a.SupplierId));
-            }
-
-            if (selectedPeriods.Any())
-            {
-                query = query.Where(a => selectedPeriods.Contains(a.Period));
-            }
+            var query = BuildFilteredQuery(selectedSupplierIds, selectedPeriods);
 
             // Revenue är decimal så SQLite kan inte ORDER BY det i databasen. Vi hämtar datan ofiltrerad på sortering här, och sorterar i minnet nedan
             var isRevenueSort = sortOrder is "revenue_asc" or "revenue_desc";
@@ -84,6 +73,25 @@ namespace SupplierPortal.Controllers
             ViewBag.SelectedPeriods = selectedPeriods;
 
             return View(activations);
+        }
+
+        private IQueryable<Activation> BuildFilteredQuery(List<int> selectedSupplierIds, List<string> selectedPeriods)
+        {
+            var query = _context.Activations
+                .Include(a => a.Supplier)
+                .AsQueryable();
+
+            if (selectedSupplierIds.Any())
+            {
+                query = query.Where(a => selectedSupplierIds.Contains(a.SupplierId));
+            }
+
+            if (selectedPeriods.Any())
+            {
+                query = query.Where(a => selectedPeriods.Contains(a.Period));
+            }
+
+            return query;
         }
 
         // GET: /Activations/Create
@@ -166,6 +174,50 @@ namespace SupplierPortal.Controllers
             }
 
             return RedirectToAction(nameof(Index));
+        }
+
+        // GET: /Activations/Export
+        public async Task<IActionResult> Export(List<int>? supplierId, List<string>? period)
+        {
+            var selectedSupplierIds = supplierId ?? new List<int>();
+            var selectedPeriods = period ?? new List<string>();
+
+            var activations = await BuildFilteredQuery(selectedSupplierIds, selectedPeriods)
+                .OrderByDescending(a => a.Year)
+                .ThenByDescending(a => a.Period)
+                .ToListAsync();
+
+            using var workbook = new XLWorkbook();
+            var worksheet = workbook.Worksheets.Add("Activations");
+
+            string[] headers = { "Supplier", "Product", "Impressions", "Clicks", "Revenue (SEK)", "Period", "Year" };
+            for (int i = 0; i < headers.Length; i++)
+            {
+                worksheet.Cell(1, i + 1).Value = headers[i];
+                worksheet.Cell(1, i + 1).Style.Font.Bold = true;
+            }
+
+            int row = 2;
+            foreach (var a in activations)
+            {
+                worksheet.Cell(row, 1).Value = a.Supplier.Name;
+                worksheet.Cell(row, 2).Value = a.Product;
+                worksheet.Cell(row, 3).Value = a.Impressions;
+                worksheet.Cell(row, 4).Value = a.Clicks;
+                worksheet.Cell(row, 5).Value = a.Revenue;
+                worksheet.Cell(row, 6).Value = a.Period;
+                worksheet.Cell(row, 7).Value = a.Year;
+                row++;
+            }
+
+            worksheet.Columns().AdjustToContents();
+
+            using var stream = new MemoryStream();
+            workbook.SaveAs(stream);
+            stream.Position = 0;
+
+            var fileName = $"activations_{DateTime.Now:yyyyMMdd_HHmm}.xlsx";
+            return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
         }
     }
 }

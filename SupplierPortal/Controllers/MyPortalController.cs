@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SupplierPortal.Data;
 using SupplierPortal.Models;
+using ClosedXML.Excel;
 
 namespace SupplierPortal.Controllers
 {
@@ -91,6 +92,70 @@ namespace SupplierPortal.Controllers
             ViewBag.CurrentSort = sortOrder;
 
             return View(activations);
+        }
+
+        // GET: /MyPortal/Export
+        public async Task<IActionResult> Export(List<string>? period)
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser?.SupplierId == null)
+            {
+                return NotFound("No supplier is linked to this account.");
+            }
+
+            var supplier = await _context.Suppliers.FindAsync(currentUser.SupplierId);
+            if (supplier == null)
+            {
+                return NotFound();
+            }
+
+            var selectedPeriods = period ?? new List<string>();
+
+            var query = _context.Activations
+                .Where(a => a.SupplierId == supplier.Id)
+                .AsQueryable();
+
+            if (selectedPeriods.Any())
+            {
+                query = query.Where(a => selectedPeriods.Contains(a.Period));
+            }
+
+            var activations = await query
+                .OrderByDescending(a => a.Year)
+                .ThenByDescending(a => a.Period)
+                .ToListAsync();
+
+            using var workbook = new XLWorkbook();
+            var worksheet = workbook.Worksheets.Add("My activations");
+
+            string[] headers = { "Product", "Impressions", "Clicks", "Revenue (SEK)", "Period", "Year" };
+            for (int i = 0; i < headers.Length; i++)
+            {
+                worksheet.Cell(1, i + 1).Value = headers[i];
+                worksheet.Cell(1, i + 1).Style.Font.Bold = true;
+            }
+
+            int row = 2;
+            foreach (var a in activations)
+            {
+                worksheet.Cell(row, 1).Value = a.Product;
+                worksheet.Cell(row, 2).Value = a.Impressions;
+                worksheet.Cell(row, 3).Value = a.Clicks;
+                worksheet.Cell(row, 4).Value = a.Revenue;
+                worksheet.Cell(row, 5).Value = a.Period;
+                worksheet.Cell(row, 6).Value = a.Year;
+                row++;
+            }
+
+            worksheet.Columns().AdjustToContents();
+
+            using var stream = new MemoryStream();
+            workbook.SaveAs(stream);
+            stream.Position = 0;
+
+            var safeName = supplier.Name.Replace(" ", "_");
+            var fileName = $"{safeName}_activations_{DateTime.Now:yyyyMMdd_HHmm}.xlsx";
+            return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
         }
     }
 }

@@ -27,6 +27,9 @@
         <p class="text-muted"><em>No account manager assigned yet.</em></p>
     }
 
+    <a href="@Url.Action("Export", new { period = selectedPeriods.ToArray() })" class="btn btn-primary btn-sm me-2">
+        <i class="bi bi-download"></i> Export
+    </a>
     @if (!string.IsNullOrEmpty(supplier.LookerStudioUrl))
     {
         <a href="@supplier.LookerStudioUrl" target="_blank" class="btn btn-outline-primary btn-sm">
