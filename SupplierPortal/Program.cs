@@ -50,7 +50,6 @@ using (var scope = app.Services.CreateScope())
     await context.Database.MigrateAsync();
 
     await SeedData.EnsureRolesCreatedAsync(scope.ServiceProvider);
-    await SeedData.EnsureTestSuppliersCreatedAsync(context);
 }
 
 app.UseHttpsRedirection();
