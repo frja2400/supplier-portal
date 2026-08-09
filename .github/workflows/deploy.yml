@@ -23,16 +23,15 @@ jobs:
       - name: Publish
         run: dotnet publish SupplierPortal/SupplierPortal.csproj -c Release -o ./publish
 
-      - name: Copy files to server
+      - name: Copy files to VPS
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_PORT }}
-          source: "publish/*"
-          target: "/tmp/supplierportal"
-          strip_components: 1
+          source: "./publish/*"
+          target: "/var/www/supplierportal"
 
       - name: Deploy and restart service
         uses: appleboy/ssh-action@v1.0.3
@@ -42,6 +41,7 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_PORT }}
           script: |
-            sudo cp -r /tmp/supplierportal/* /var/www/supplierportal/
-            sudo chmod -R 755 /var/www/supplierportal/runtimes
+            cp -r /var/www/supplierportal/publish/* /var/www/supplierportal/
+            rm -rf /var/www/supplierportal/publish
+            chmod -R 755 /var/www/supplierportal/runtimes
             sudo systemctl restart supplierportal.service
