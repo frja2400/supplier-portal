@@ -110,10 +110,14 @@ namespace SupplierPortal.Controllers
                 "PasswordRequiresLower" => nameof(RegisterViewModel.Password),
                 "PasswordRequiresNonAlphanumeric" => nameof(RegisterViewModel.Password),
                 "DuplicateUserName" => nameof(RegisterViewModel.Email),
-                _ => string.Empty // unknown error code: falls back to the validation summary
+                _ => string.Empty
             };
 
-            return (field, error.Description); // Identity's default English text, used as-is
+            var message = error.Code == "DuplicateUserName"
+                ? "This email already has an account."
+                : error.Description;
+
+            return (field, message);
         }
     }
 }

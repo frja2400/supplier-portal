@@ -94,7 +94,11 @@ namespace SupplierPortal.Controllers
                         _ => string.Empty
                     };
 
-                    ModelState.AddModelError(field, error.Description);
+                    var message = error.Code == "DuplicateUserName"
+                        ? "This email already has an account."
+                        : error.Description;
+
+                    ModelState.AddModelError(field, message);
                 }
             }
 
@@ -223,6 +227,8 @@ namespace SupplierPortal.Controllers
                 .FirstOrDefaultAsync(s => s.Id == id);
 
             if (supplier == null) return NotFound();
+
+            ViewBag.HasActivations = await _context.Activations.AnyAsync(a => a.SupplierId == id);
 
             return View(supplier);
         }

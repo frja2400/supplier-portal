@@ -17,7 +17,7 @@
             <th>Account email</th>
             <th>Account manager</th>
             <th>Looker Studio</th>
-            <th></th>
+            <th><span class="visually-hidden">Actions</span></th>
         </tr>
     </thead>
     <tbody>
@@ -80,7 +80,7 @@
             <div class="mb-3">
                 <label asp-for="NewAccount.Password" class="form-label">Temporary password</label>
                 <div class="input-group">
-                    <input asp-for="NewAccount.Password" class="form-control" id="passwordField" type="text" />
+                    <input asp-for="NewAccount.Password" class="form-control" type="text" />
                     <button type="button" class="btn btn-outline-secondary"
                             onclick="generatePassword()">Generate</button>
                 </div>
@@ -117,6 +117,6 @@
 
         password = password.sort(() => Math.random() - 0.5).join("");
 
-        document.getElementById("passwordField").value = password;
+        document.getElementById("NewAccount_Password").value = password;
     }
 </script>

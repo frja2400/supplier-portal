@@ -106,6 +106,8 @@ namespace SupplierPortal.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Activation activation)
         {
+            ReplaceInvalidNumberMessages();
+
             if (ModelState.IsValid)
             {
                 _context.Add(activation);
@@ -135,6 +137,8 @@ namespace SupplierPortal.Controllers
         public async Task<IActionResult> Edit(int id, Activation activation)
         {
             if (id != activation.Id) return NotFound();
+
+            ReplaceInvalidNumberMessages();
 
             if (ModelState.IsValid)
             {
@@ -218,6 +222,27 @@ namespace SupplierPortal.Controllers
 
             var fileName = $"activations_{DateTime.Now:yyyyMMdd_HHmm}.xlsx";
             return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+        }
+
+        private void ReplaceInvalidNumberMessages()
+        {
+            var numericFields = new Dictionary<string, string>
+    {
+        { "SupplierId", "Please select a supplier." },
+        { "Impressions", "Please enter a valid number for Impressions." },
+        { "Clicks", "Please enter a valid number for Clicks." },
+        { "Revenue", "Please enter a valid number for Revenue." },
+        { "Year", "Please enter a valid number for Year." }
+    };
+
+            foreach (var (field, message) in numericFields)
+            {
+                if (ModelState.TryGetValue(field, out var entry) && entry.Errors.Count > 0)
+                {
+                    entry.Errors.Clear();
+                    entry.Errors.Add(message);
+                }
+            }
         }
     }
 }

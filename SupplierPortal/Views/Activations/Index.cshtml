@@ -33,6 +33,7 @@
 
 <form asp-action="Index" method="get" id="filterForm" class="row g-2 mb-4">
     <div class="col-auto">
+        <label for="searchInput" class="visually-hidden">Search product or supplier</label>
         <input type="text" id="searchInput" class="form-control" placeholder="Search product or supplier..."
                autocomplete="off" />
     </div>
@@ -111,7 +112,7 @@
             <th><a
                 href="@Url.Action("Index", new { sortOrder = NextSort("year", ViewBag.CurrentSort), supplierId = selectedSuppliers.Select(x => x.Id).ToArray(), period = selectedPeriods.ToArray() })">Year</a>
             </th>
-            <th></th>
+            <th><span class="visually-hidden">Actions</span></th>
         </tr>
     </thead>
     <tbody>

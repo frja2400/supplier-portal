@@ -26,7 +26,8 @@
                         onclick="document.getElementById('fileInput').click()">
                     Choose file
                 </button>
-                <input type="file" id="fileInput" name="file" accept=".xlsx,.csv" required hidden />
+                <label for="fileInput" class="visually-hidden">Choose file to upload</label>
+                <input type="file" id="fileInput" name="file" accept=".xlsx,.csv" hidden />
             </div>
 
             <p id="fileName" class="text-muted mb-3"></p>
@@ -87,6 +88,13 @@
 
             fileInput.files = e.dataTransfer.files;
             showFileName();
+        }
+    });
+
+    document.getElementById('uploadForm').addEventListener('submit', function (e) {
+        if (fileInput.files.length === 0) {
+            e.preventDefault();
+            fileNameDisplay.innerHTML = `<span class="text-danger"><i class="bi bi-exclamation-triangle"></i> Please choose a file first.</span>`;
         }
     });
 </script>

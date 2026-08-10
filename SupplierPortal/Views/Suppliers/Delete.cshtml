@@ -6,10 +6,13 @@
 
 <h1>Delete supplier</h1>
 
-<div class="alert alert-warning">
-    <strong>Warning:</strong> Deleting this supplier will also permanently delete
-    all of its registered activations. This cannot be undone.
-</div>
+@if ((bool)ViewBag.HasActivations)
+{
+    <div class="alert alert-warning">
+        <strong>Warning:</strong> This supplier has registered activations.
+        Deleting the supplier will also permanently delete all of them. This cannot be undone.
+    </div>
+}
 
 <p>Are you sure you want to delete this supplier?</p>
 
