@@ -7,6 +7,7 @@ Databasdriven webbapplikation för hantering och delning av leverantörsdata fö
 **Demo-inloggning (MEDS-admin):**
 - E-post: `demo-admin@example.com`
 - Lösenord: `DemoPass123!`
+
 **Demo-inloggning (leverantör):**
 - E-post: `demo-supplier@example.com`
 - Lösenord: `DemoPass123!`
@@ -144,9 +145,5 @@ Endpointen skyddas med en hemlig nyckel (skild från vanlig autentisering) och k
 ## Publicering
  
 Applikationen körs på en VPS med Nginx som reverse proxy och HTTPS via Certbot. GitHub Actions bygger och distribuerar automatiskt vid push till `main`, och en systemd-tjänst håller applikationen igång med automatisk omstart vid krasch.
- 
-## Om projektet
- 
-Projektarbete inom Webbutveckling (5,5 hp) vid Mittuniversitetet, VT 2026, utvecklat i samarbete med MEDS Apotek.
  
 **Författare:** Frida Jansson
