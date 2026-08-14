@@ -1,0 +1,15 @@
+name: Reset demo data
+
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  reset:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call reset endpoint
+        run: |
+          curl -f -X POST https://supplierportal.fridajansson.com/api/demo/reset \
+            -H "X-Reset-Key: ${{ secrets.DEMO_RESET_KEY }}"
