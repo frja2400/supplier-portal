@@ -23,11 +23,19 @@ namespace SupplierPortal.Data
             }
         }
 
-        // Skapar demo-data för den publika portfoliolänken. Anropas via DemoController.Reset,
-        // inte vid vanlig applikationsuppstart.
+        // Skapar demo-data.
         public static async Task SeedDemoDataAsync(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
-            var nordicGlow = new Supplier { Name = "Nordic Glow AB" };
+            var admin = new ApplicationUser { UserName = "demo-admin@example.com", Email = "demo-admin@example.com", EmailConfirmed = true };
+            await userManager.CreateAsync(admin, "DemoPass123!");
+            await userManager.AddToRoleAsync(admin, MedsEmployeeRole);
+
+            var nordicGlow = new Supplier
+            {
+                Name = "Nordic Glow AB",
+                AccountManagerId = admin.Id,
+                LookerStudioUrl = "https://lookerstudio.google.com/gallery"
+            };
             var lumina = new Supplier { Name = "Lumina Skincare" };
             context.Suppliers.AddRange(nordicGlow, lumina);
             await context.SaveChangesAsync();
@@ -37,10 +45,6 @@ namespace SupplierPortal.Data
                 new Activation { Supplier = lumina, Product = "Lumina Daily Hydration Cream", Impressions = 12750, Clicks = 260, Revenue = 16200, Period = "V10-V12", Year = 2026 }
             );
             await context.SaveChangesAsync();
-
-            var admin = new ApplicationUser { UserName = "demo-admin@example.com", Email = "demo-admin@example.com", EmailConfirmed = true };
-            await userManager.CreateAsync(admin, "DemoPass123!");
-            await userManager.AddToRoleAsync(admin, MedsEmployeeRole);
 
             var supplierUser = new ApplicationUser { UserName = "demo-supplier@example.com", Email = "demo-supplier@example.com", SupplierId = nordicGlow.Id, EmailConfirmed = true };
             await userManager.CreateAsync(supplierUser, "DemoPass123!");
